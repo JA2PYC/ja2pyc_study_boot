@@ -5,11 +5,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 
-@Controller
 public class HomeController {
     @GetMapping("/")
+    public String getIndex(@RequestParam String param) {
+        return "index.html";
+    }
+    
+    @GetMapping("/home")
     public String getHome(@RequestParam String param) {
-        return "index";
+        return "home.html";
     }
     
 }
