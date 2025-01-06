@@ -31,3 +31,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# env #
+.env
+/src/main/resources/config/
+# /src/main/resources/application-dev.properties
+/src/main/resources/application-prod.properties
