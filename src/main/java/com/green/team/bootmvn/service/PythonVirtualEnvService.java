@@ -2,6 +2,7 @@ package com.green.team.bootmvn.service;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
 
 import org.springframework.stereotype.Service;
@@ -78,11 +79,36 @@ public class PythonVirtualEnvService {
         System.out.println("의존성 설치를 시작합니다.");
         try {
             String installCommand = getPythonExecutablePath() + " -m pip install -r " + REQUIREMENTS_FILE;
-            
+            ProcessBuilder processBuilder = new ProcessBuilder(installCommand);
+            Process process = processBuilder.start();
+            printProcessOutput(process);
+
+            int exitCode = process.waitFor();
+            if (exitCode == 0) {
+                System.out.println("의존성 설치 완료!");
+            } else {
+                System.err.println("의존성 설치 중 오류 발생! exitCode : " + exitCode);
+                System.exit(1);
+                return;
+            }
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("의존성 설치 중 오류 발생 / " + e.getMessage());
             return;
+        }
+    }
+
+    // 프로세스 버퍼 출력
+    private void printProcessOutput(Process process) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                System.out.println(line);
+            }
+            while ((line = errorReader.readLine()) != null) {
+                System.err.println(line);
+            }
         }
     }
 
