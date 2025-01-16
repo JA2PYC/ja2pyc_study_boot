@@ -23,8 +23,9 @@ public class PythonVirtualEnvService {
         }
 
         if (!dependenciesChecked) {
-            checkDependencies();
+            installDependencies();
         }
+
     }
 
     // 가상환경 체크
@@ -53,14 +54,47 @@ public class PythonVirtualEnvService {
             }
 
             int exitCode = process.waitFor();
-            System.out.println("프로세스 종료 코드 : " + exitCode);
+            if (exitCode == 0) {
+                System.out.println("가상환경 생성 완료!");
+            } else {
+                System.out.println("가상환경 생성 중 오류 발생 / 프로세스 종료 코드 : " + exitCode);
+            }
         } catch (Exception e) {
+            e.printStackTrace();
             System.out.println("가상환경 생성 실패 : " + e.getMessage());
         }
     }
 
-    // 의존성 체크크
-    private void checkDependencies() {
+    // 의존성 설치치
+    private void installDependencies() {
+        // 의존성 플래그
         dependenciesChecked = true;
+        File requirements = new File(REQUIREMENTS_FILE);
+        if (!requirements.exists() || requirements.length() == 0) {
+            System.out.println("의존성 설치를 생략합니다. / Requirements.txt를 확인해 주세요.");
+            return;
+        }
+
+        System.out.println("의존성 설치를 시작합니다.");
+        try {
+            String installCommand = getPythonExecutablePath() + " -m pip install -r " + REQUIREMENTS_FILE;
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("의존성 설치 중 오류 발생 / " + e.getMessage());
+            return;
+        }
     }
+
+    // 가상환경 파이썬 경로
+    private String getPythonExecutablePath() {
+        String pythonPath = isWindows() ? "Scripts/python" : "bin/python";
+        return VENV_PATH + "/" + pythonPath;
+    }
+
+    // 실행환경 확인
+    private boolean isWindows() {
+        return System.getProperty("os.name").toLowerCase().contains("win");
+    }
+
 }
