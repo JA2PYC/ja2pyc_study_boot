@@ -30,7 +30,9 @@ public class PythonService {
         }
 
         try {
-            Process process = Runtime.getRuntime().exec(commandBuilder.toString());
+            ProcessBuilder processBuilder = new ProcessBuilder(commandBuilder.toString());
+            Process process = processBuilder.start();
+            // Process process = Runtime.getRuntime().exec(commandBuilder.toString());
             String output  = getProcessOutput(process);
 
             int exitCode = process.waitFor();
