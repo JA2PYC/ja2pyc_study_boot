@@ -1,9 +1,12 @@
 package com.green.team.bootmvn.service;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import org.springframework.stereotype.Service;
 
@@ -12,10 +15,17 @@ public class PythonVirtualEnvService {
     // VENV PATH
     private static final String VENV_PATH = "src/main/python/venv";
     private static final String REQUIREMENTS_FILE = "src/main/python/requirements.txt";
-
+    
     // DEPENDENCIES Flag
     private boolean dependenciesChecked = false;
 
+    // Python Process
+    private Process pythonProcess;
+    private BufferedWriter processWriter;
+    private BufferedReader processReader;
+    private final BlockingQueue<String> responseQueue = new LinkedBlockingQueue<>();
+
+    // Run Virtual Env
     public void runVirtualEnv() {
         boolean isVENVExists = checkVirtualEnv();
 
